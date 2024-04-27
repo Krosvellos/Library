@@ -4,11 +4,15 @@ import java.util.UUID;
 
 public class Userdto {
 
-
+    private UUID id;
     private String name;
+    private String email;
     private String password;
 
 
+    public UUID getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
@@ -22,11 +26,26 @@ public class Userdto {
         this.password = password;
     }
 
+    public String getEmail() {
+        return email;
+    }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public Userdto(String name, String password) {
+    public String toString() {
+        return "User: { " +
+                "username='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", id='" + id + '\'' +
+                '}';
+    }
 
+    public Userdto(String name, String email, String password) {
+        this.id = UUID.randomUUID();
         this.name = name;
+        this.email = email;
         this.password = password;
 
     }

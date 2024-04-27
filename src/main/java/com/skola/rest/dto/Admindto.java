@@ -6,6 +6,7 @@ public class Admindto {
 
     private UUID id;
     private String name;
+    private String email;
     private String password;
     private boolean admin;
 
@@ -25,13 +26,30 @@ public class Admindto {
         this.password = password;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public boolean isAdmin() {
         return admin;
     }
 
-    public Admindto(String name, String password) {
+    public String toString() {
+        return "Admin: { " +
+                "name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", id='" + id + '\'' +
+                '}';
+    }
+
+    public Admindto(String name, String email, String password) {
         this.id = UUID.randomUUID();
         this.name = name;
+        this.email = email;
         this.password = password;
         this.admin = true;
 

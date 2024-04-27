@@ -28,6 +28,17 @@ public class Bookdto {
         this.reserved = reserved;
     }
 
+    public String toString() {
+        return "Book: { " +
+                "name='" + name + '\'' +
+                ", id='" + id + '\'' +
+                '}';
+    }
+
+    public Bookdto() {
+        this.id = UUID.randomUUID();
+    }
+
     public Bookdto(String name) {
         this.id = UUID.randomUUID();
         this.name = name;
