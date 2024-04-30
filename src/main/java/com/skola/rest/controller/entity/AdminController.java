@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.skola.rest.Database.adminHashMap;
@@ -24,6 +25,14 @@ public class AdminController {
     ResponseEntity<String> createAdmin(@RequestBody Admindto admin) {
 
         UUID uuid = UUID.randomUUID();
+
+        for (Map.Entry<UUID, Admindto> entry : Database.adminHashMap.entrySet()) {
+            Admindto adminValue = entry.getValue();
+            if (adminValue != null && adminValue.getEmail().equals(admin.getEmail())) {
+                return new ResponseEntity<>("This admin already exists!", HttpStatus.NOT_FOUND);
+            }
+        }
+
         adminUUIDs.add(uuid);
         adminHashMap.put(uuid, admin);
 

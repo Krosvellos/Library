@@ -27,9 +27,18 @@ public class UserController {
 
 
             UUID uuid = UUID.randomUUID();
+
+        for (Map.Entry<UUID, Userdto> entry : Database.userHashMap.entrySet()) {
+            Userdto userValue = entry.getValue();
+            if (userValue != null && userValue.getEmail().equals(user.getEmail())) {
+                return new ResponseEntity<>("This user already exists!", HttpStatus.NOT_FOUND);
+            }
+        }
+
             userUUIDs.add(uuid);
             userHashMap.put(uuid, user);
-
+            System.out.println(userHashMap);
+            System.out.println("User Email: " +user.getEmail());
 
 
         return new ResponseEntity<>("User Created: " + user.getName(), HttpStatus.OK);
@@ -40,7 +49,7 @@ public class UserController {
     ResponseEntity<String> deleteUser() {
 
 
-        return new ResponseEntity<>("Hello world", HttpStatus.OK);
+        return new ResponseEntity<>("User Deleted: ", HttpStatus.OK);
 
     }
 
