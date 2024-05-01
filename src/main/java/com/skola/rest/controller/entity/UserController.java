@@ -26,7 +26,7 @@ public class UserController {
             ResponseEntity<String> createUser(@RequestBody Userdto user) {
 
 
-            UUID uuid = UUID.randomUUID();
+        UUID uuid = UUID.randomUUID();
 
         for (Map.Entry<UUID, Userdto> entry : Database.userHashMap.entrySet()) {
             Userdto userValue = entry.getValue();
@@ -46,10 +46,18 @@ public class UserController {
     }
 
     @DeleteMapping("/delete")
-    ResponseEntity<String> deleteUser() {
-
-
-        return new ResponseEntity<>("User Deleted: ", HttpStatus.OK);
+    ResponseEntity<String> deleteUser(@RequestBody Map<String, String> requestBody) {
+        String id = requestBody.get("id");
+        UUID userId = UUID.fromString(id);
+        for(Map.Entry<UUID, Userdto> entry: userHashMap.entrySet()) {
+            Userdto user = entry.getValue();
+            if (user != null && user.getId().equals(userId)){
+                userHashMap.remove(user.getId());
+                System.out.println(userHashMap);
+                return new ResponseEntity<>("User has been deleted!",HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>("There is no such user.", HttpStatus.NOT_FOUND);
 
     }
 
@@ -74,6 +82,23 @@ public class UserController {
         }
 
         return new ResponseEntity<>(responseBuilder.toString(), HttpStatus.OK);
+
+    }
+
+    @GetMapping("listone")
+    ResponseEntity<String> getUser(@RequestBody Map<String, String> requestBody) {
+
+        String email = requestBody.get("email");
+
+        for(Map.Entry<UUID, Userdto> entry: userHashMap.entrySet()) {
+            Userdto user = entry.getValue();
+            if (user != null && user.getEmail().equals(email)){
+                return new ResponseEntity<>("User email: "+ user.getEmail() + ", UserUUID: "+ user.getId(),HttpStatus.OK);
+
+            }
+        }
+
+        return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
 
     }
 

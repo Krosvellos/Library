@@ -41,13 +41,21 @@ public class Userdto {
                 ", id='" + id + '\'' +
                 '}';
     }
-
     public Userdto(String name, String email, String password) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+        if (password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be empty");
+        }
+
         this.id = UUID.randomUUID();
         this.name = name;
         this.email = email;
         this.password = password;
-
     }
 
 }
