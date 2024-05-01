@@ -28,6 +28,7 @@ public class AdminController {
 
         for (Map.Entry<UUID, Admindto> entry : Database.adminHashMap.entrySet()) {
             Admindto adminValue = entry.getValue();
+
             if (adminValue != null && adminValue.getEmail().equals(admin.getEmail())) {
                 return new ResponseEntity<>("This admin already exists!", HttpStatus.NOT_FOUND);
             }
@@ -66,10 +67,35 @@ public class AdminController {
     }
 
     @DeleteMapping("/delete")
-    ResponseEntity<String> deleteAdmin() {
+    ResponseEntity<String> deleteAdmin(@RequestBody Map<String, String> requestBody) {
+        String id = requestBody.get("id");
+        UUID adminId = UUID.fromString(id);
+        for(Map.Entry<UUID, Admindto> entry: adminHashMap.entrySet()) {
+            Admindto admin = entry.getValue();
+            if (admin != null && admin.getId().equals(adminId)){
+                adminHashMap.remove(admin.getId());
+                System.out.println(adminHashMap);
+                return new ResponseEntity<>("Admin has been deleted!",HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>("There is no such admin.", HttpStatus.NOT_FOUND);
 
+    }
 
-        return new ResponseEntity<>("Hello world", HttpStatus.OK);
+    @GetMapping("listone")
+    ResponseEntity<String> getAdmin(@RequestBody Map<String, String> requestBody) {
+
+        String email = requestBody.get("email");
+
+        for(Map.Entry<UUID, Admindto> entry: adminHashMap.entrySet()) {
+            Admindto admin = entry.getValue();
+            if (admin != null && admin.getEmail().equals(email)){
+                return new ResponseEntity<>("Admin email: "+ admin.getEmail() + ", UserUUID: "+ admin.getId(),HttpStatus.OK);
+
+            }
+        }
+
+        return new ResponseEntity<>("Admin not found", HttpStatus.NOT_FOUND);
 
     }
 

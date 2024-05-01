@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.skola.rest.dto.Userdto;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.skola.rest.Database.userHashMap;
 
@@ -31,7 +28,7 @@ public class UserController {
         for (Map.Entry<UUID, Userdto> entry : Database.userHashMap.entrySet()) {
             Userdto userValue = entry.getValue();
             if (userValue != null && userValue.getEmail().equals(user.getEmail())) {
-                return new ResponseEntity<>("This user already exists!", HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>("This user already exists!", HttpStatus.CONFLICT);
             }
         }
 
@@ -48,17 +45,33 @@ public class UserController {
     @DeleteMapping("/delete")
     ResponseEntity<String> deleteUser(@RequestBody Map<String, String> requestBody) {
         String id = requestBody.get("id");
-        UUID userId = UUID.fromString(id);
-        for(Map.Entry<UUID, Userdto> entry: userHashMap.entrySet()) {
+        UUID userId;
+        try {
+            userId = UUID.fromString(id);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>("Invalid ID format", HttpStatus.BAD_REQUEST);
+        }
+
+        boolean userFound = false;
+        Iterator<Map.Entry<UUID, Userdto>> iterator = userHashMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<UUID, Userdto> entry = iterator.next();
             Userdto user = entry.getValue();
-            if (user != null && user.getId().equals(userId)){
-                userHashMap.remove(user.getId());
-                System.out.println(userHashMap);
-                return new ResponseEntity<>("User has been deleted!",HttpStatus.OK);
+            if (user != null && user.getId().equals(userId)) {
+                iterator.remove();
+                userFound = true;
+                break;
             }
         }
-        return new ResponseEntity<>("There is no such user.", HttpStatus.NOT_FOUND);
 
+        if (userFound) {
+            System.out.println("User with ID " + userId + " has been deleted.");
+            System.out.println("Updated userHashMap: " + userHashMap);
+            return new ResponseEntity<>("User has been deleted!", HttpStatus.OK);
+        } else {
+            System.out.println("User with ID " + userId + " not found.");
+            return new ResponseEntity<>("There is no such user.", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PutMapping("/update")
